@@ -21,4 +21,7 @@ func main() {
 
     var x4 int
     fmt.Println("Var x4 = ", x4) // Var x4 =  0
+
+    const pi = 3.14
+    fmt.Println("pi = ", pi) // pi =  3.14
 }
