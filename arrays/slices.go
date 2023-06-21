@@ -34,4 +34,15 @@ func main () {
 	dyn_array := make([]int, 0)
 	dyn_array = append(dyn_array, 8, 16)
 	fmt.Println(dyn_array) 		// выведет [8 16]
+
+	for _, s := range dyn_array_five {
+		fmt.Print(s, "; ")	// 0; 0; 0; 0; 0; 8; 16
+	}
+	fmt.Print("\n")
+
+	word := "hello"
+	for _, w := range word {
+  		fmt.Printf("%c", w) 	// hello
+	}
+	fmt.Print("\n")
 }
