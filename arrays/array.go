@@ -13,4 +13,8 @@ func main () {
 	for i := 0; i < len(words); i++ {	
 		fmt.Print(words[i], " ")		// Hello my name is Ravshan
 	}
+	fmt.Print("\n")
+	var bl [5]bool
+	fmt.Print(bl[0], bl[4])		// false false | true = 1, false = 0; 
+
 }
