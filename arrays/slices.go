@@ -28,12 +28,12 @@ func main () {
 	// dynamic array
 	dyn_array_five := make([]int, 5)
 	dyn_array_five = append(dyn_array_five, 8, 16)
-	fmt.Println(dyn_array_five) // выведет [0 0 0 0 0 8 16]
+	fmt.Println(dyn_array_five) //  [0 0 0 0 0 8 16]
 
 	// dynamic array 0
 	dyn_array := make([]int, 0)
 	dyn_array = append(dyn_array, 8, 16)
-	fmt.Println(dyn_array) 		// выведет [8 16]
+	fmt.Println(dyn_array) 		//  [8 16]
 
 	for _, s := range dyn_array_five {
 		fmt.Print(s, "; ")	// 0; 0; 0; 0; 0; 8; 16
