@@ -43,8 +43,8 @@ func main() {
   	<-ch		// waiting data from the channel
 	close(ch)	// close channel
 
-  	evenCh := make(chan int)
-  	sqCh := make(chan int)
+  	evenCh := make(chan int)	// create 1 channel
+  	sqCh := make(chan int)		// create 2 channel
 
   	go evenSum(0, 100, evenCh)
   	go squareSum(0, 100, sqCh)
