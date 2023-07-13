@@ -4,8 +4,10 @@ import "fmt"
 
 func main() {
 
-	var number_1 int = 30
-	var number_2 int = 15
+	var (
+        number_1 int = 30
+        number_2 int = 15
+    )
     
 	fmt.Println(number_1 == number_2) // output false
 	fmt.Println(number_1 != number_2) // output true
