@@ -5,6 +5,13 @@ import (
     "unicode/utf8"
 )
 
+const(          // список констант
+	A int = 45
+	B           // значение будет скопировано из предыдущей
+	C float32 = 3.3
+	D
+)
+
 func main() {
     var x1 int = 1
     var x2, y1 = 2, 3
@@ -28,4 +35,6 @@ func main() {
 
     const pi = 3.14
     fmt.Println("pi = ", pi) // pi =  3.14
+
+    fmt.Println(A, B, C, D)  // 45 45 3.3 3.3
 }
