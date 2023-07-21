@@ -48,7 +48,7 @@ func main () {
 	}
 
 	month := "January"
-	switch {
+	switch {		// после switch "переключатель" не нужен
     	case month == "December" || month == "January" || month == "February":
         	fmt.Println("Winter")
     	case month == "March" || month == "April" || month == "May":

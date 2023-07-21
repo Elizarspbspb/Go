@@ -5,6 +5,13 @@ import (
     "unicode/utf8"
 )
 
+const(          // список констант
+	A int = 45
+	B           // значение будет скопировано из предыдущей
+	C float32 = 3.3
+	D
+)
+
 func main() {
     var x1 int = 1
     var x2, y1 = 2, 3
@@ -18,10 +25,16 @@ func main() {
     fmt.Println(len(s))     // 27
     fmt.Println(utf8.RuneCountInString(s)) // 15
     fmt.Println(s[0], s[1]) // 208 159 
+    //fmt.Print(string(s[0]), string(s[1])) // error
+    fmt.Println(string(s[0]))
+    fmt.Println("Hello Go"[0]) // вывод: 72
+    fmt.Println(string("Hello Go"[0])) // вывод: H
 
     var x4 int
     fmt.Println("Var x4 = ", x4) // Var x4 =  0
 
     const pi = 3.14
     fmt.Println("pi = ", pi) // pi =  3.14
+
+    fmt.Println(A, B, C, D)  // 45 45 3.3 3.3
 }
