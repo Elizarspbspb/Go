@@ -39,7 +39,7 @@ func main() {
 	// ! ! ! fmt.Println(sum)	// 40 */
 
 	// Task 3: В последовательности определить количество элементов, которые равны ее наибольшему элементу.
-	fmt.Println("-------- Task 3 --------")
+	/*fmt.Println("-------- Task 3 --------")
 	var input, count_max, max int	
 	for fmt.Scan(&input); input != 0; fmt.Scan(&input) {	// 1 2 3 4 4 4 3 0
 		if input > max {
@@ -49,5 +49,33 @@ func main() {
 			count_max++
 		}
 	}
-	fmt.Println(count_max)	// 3 */
+	fmt.Println(count_max)	// 3
+
+	// Task 4: Вводится 3 натуральных числа n, c, d. Вывести первое число от 1 до n кратное c, но НЕ кратное d.
+	fmt.Println("-------- Task 4 --------")
+	var n, c, d int
+    fmt.Scanln(&n)
+    fmt.Scanln(&c)
+    fmt.Scanln(&d)
+    i := 1
+    for i<=n { 
+        if (i%c == 0) && (i%d != 0) {
+            fmt.Println(i)
+            break
+        }
+        i++
+    } */
+
+	// Task 5: Считывать числа. Если < 10 пропустить, если > 100 прервать цикл.
+	fmt.Println("-------- Task 5 --------")
+	var input_s int	
+	for {			
+		fmt.Scanln(&input_s) //
+		if input_s < 10 {
+			continue
+		} else if input_s > 100 {
+			break
+		}
+		fmt.Println(input_s)
+	}
 }
