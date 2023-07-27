@@ -39,4 +39,9 @@ func main () {
 		sum += i
 	}
 	fmt.Println(sum) // 6 (2+4)		
+
+	var input int	// считываем числа пока не будет введен 0
+	for fmt.Scan(&input); input != 0; fmt.Scan(&input) { // until press /n
+		fmt.Println(input)
+	}
 }

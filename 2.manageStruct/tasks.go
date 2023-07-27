@@ -101,7 +101,7 @@ func main() {
 	var input_number_int int
 	fmt.Scan(&input_number_int)
 	fmt.Println(getFirstNumber(input_number_int))
-	// first variant with if...else
+	// thiert variant with if...else
 	if input_number_int <=9 {
         fmt.Println(input_number_int)
     } else if input_number_int >=10 && input_number_int <=99 {
