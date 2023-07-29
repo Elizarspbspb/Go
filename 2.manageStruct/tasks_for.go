@@ -17,12 +17,12 @@ func main() {
     fmt.Println(count)	// 15
 
 	// Task 2: В последовательности чисел найти сумму 2-значных и кратных 8. 
-	/*fmt.Println("-------- Task 2 --------")
-    var input_count, input, until, sum int
+	fmt.Println("-------- Task 2 --------")
+    var input_count, input_num, until, sum int
     fmt.Scanln(&input_count)										// 5
-	for fmt.Scan(&input); until < input_count; fmt.Scan(&input) {	// 38 24 800 8 16
-		if input % 8 == 0 && input < 100 && input > 9 {
-			sum += input
+	for fmt.Scan(&input_num); until < input_count; fmt.Scan(&input_num) {	// 38 24 800 8 16
+		if input_num % 8 == 0 && input_num < 100 && input_num > 9 {
+			sum += input_num
 		}
 		until++
 		if until == 5 {
@@ -36,10 +36,10 @@ func main() {
 			sum += x
 		}
 	}*/
-	// ! ! ! fmt.Println(sum)	// 40 */
+	// ! ! ! fmt.Println(sum)	// 40
 
 	// Task 3: В последовательности определить количество элементов, которые равны ее наибольшему элементу.
-	/*fmt.Println("-------- Task 3 --------")
+	fmt.Println("-------- Task 3 --------")
 	var input, count_max, max int	
 	for fmt.Scan(&input); input != 0; fmt.Scan(&input) {	// 1 2 3 4 4 4 3 0
 		if input > max {
@@ -64,18 +64,31 @@ func main() {
             break
         }
         i++
-    } */
+    }
 
 	// Task 5: Считывать числа. Если < 10 пропустить, если > 100 прервать цикл.
 	fmt.Println("-------- Task 5 --------")
 	var input_s int	
 	for {			
-		fmt.Scanln(&input_s) //
+		fmt.Scanln(&input_s)
 		if input_s < 10 {
 			continue
 		} else if input_s > 100 {
 			break
 		}
 		fmt.Println(input_s)
+	}
+
+	// Task 6: Даны два числа. Определить цифры, входящие в запись как первого, так и второго числа.
+	fmt.Println("-------- Task 6 --------")
+	var num_1, num_2 string
+	fmt.Scanln(&num_1, &num_2)
+	for i := 0; i < len(num_1); i++ {
+		for j := 0; j < len(num_2); j++ {
+			if num_1[i] == num_2[j] {
+				fmt.Println(num_1[i] - 48)
+				fmt.Println(" ")
+			}
+		}
 	}
 }
