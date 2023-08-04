@@ -2,8 +2,17 @@ package main
 
 import "fmt"
 
+// срез — указатель на массив
 // длина (len) — это количество элементов среза;
-// емкость (cap) - количество элементов между началом среза и концом базового массива.
+// емкость (cap) — количество элементов между началом среза и концом базового массива.
+
+func fnArray(arr [5]int) {
+	arr[1] = 15	// copy array
+}
+
+func fnSlice(arr []int) {
+	arr[1] = 15	// link on array
+}
 
 func main () {
 	array := [5]int{-1, 2, 4, 6, 8}
@@ -82,5 +91,38 @@ func main () {
 		cap(users1),	// 6
 		users1,			// [Kate Sam Tom Paul]
 	)
-	pointer := fmt.Sprintf("%p", users1)
+	pointer := fmt.Sprintf("%p", users1)	// %p - адресс
+	users1 = append(users1, "10")
+	fmt.Printf("Массив: %v\n", initialUsers)	// Массив: [Bob Alice Kate Sam Tom Paul 10 Robert]
+	fmt.Printf("Срез длиной %d и емкостью %d: %v\n", len(users1), cap(users1), users1)
+	// Срез длиной 5 и емкостью 6: [Kate Sam Tom Paul 10]	
+	fmt.Println(pointer == fmt.Sprintf("%p", users1)) 	// true
+	fmt.Println("-------------------------------")
+	users1 = append(users1, "11", "12", "13")
+	fmt.Printf("Массив: %v\n", initialUsers) 	// Массив: [Bob Alice Kate Sam Tom Paul 10 Robert]
+	fmt.Printf("Срез длиной %d и емкостью %d: %v\n", len(users1), cap(users1), users1)
+	// Срез длиной 8 и емкостью 12: [Kate Sam Tom Paul 10 11 12 13]
+	// Если емкости не достаточно, то создается новый срез, основанный на массиве большего объема
+	fmt.Println(pointer == fmt.Sprintf("%p", users1))	// false
+
+	delete := []int{1, 2, 3, 4, 5, 6, 7}
+	delete = append(delete[0:2], delete[3:]...) // элементы передаются функции append как отдельные аргументы)
+	fmt.Println(delete) 	// [1 2 4 5 6 7]
+
+	// COPY
+	fmt.Printf("delete = %v\n", delete)		// delete = [1 2 4 5 6 7]
+	delete_new := make([]int, 3, 3)
+	fmt.Printf("delete_new before copy = %v\n", delete_new)	// delete_new before copy = [0 0 0]
+	count_element := copy(delete_new, delete) 
+	fmt.Printf("delete_new after copy = %v\n", delete_new) 	// delete_new after copy = [1 2 4]
+	fmt.Printf("Скопировано %d элемента\n", count_element) // Скопировано 3 элемента
+
+	// function
+	fnArray(array) 			// copy of array
+	fnSlice(delete_new)		// link of array
+	// fnArray(delete_new) 	// ERROR
+	// fnSlice(array) 		// ERROR
+
+	fmt.Println("array after function fnArray =", array) 			// [100 2 4 6 8]
+	fmt.Println("delete_new after function fnSlice =", delete_new) 	// [1 15 4]
 }
