@@ -15,7 +15,7 @@ func main () {
 	fmt.Println(slice[3])*/
 
 	// Task 2: На ввод подаются пять целых чисел в массив. найти максимальное число в этом массиве.
-	fmt.Println("-------- Task 2 --------")
+	/*fmt.Println("-------- Task 2 --------")
 	array := [5]int{}
 	var input, max int
 	for i:=0; i < 5; i++{
@@ -29,6 +29,7 @@ func main () {
 		}
 	}
 	fmt.Println(max)
+
 	// Task 3: Дан массив из целых чисел. Вывести четный элементы массива
 	fmt.Println("-------- Task 3 --------")
 	var Num, input_n int
@@ -40,5 +41,19 @@ func main () {
 		if i % 2 == 0 {
 			fmt.Print(even_array[i], " ")
 		}
+	}*/
+
+	// Task 4: Дана последовательность. Подсчитать количество положительных чисел среди элементов.
+	fmt.Println("-------- Task 4 --------")
+	var Number, input_num, count_positive int
+	fmt.Scanln(&Number)
+	pos_array := []int{}
+	for i:=0; i < Number; i++{
+		fmt.Scan(&input_num)
+		pos_array = append(pos_array, input_num)
+		if pos_array[i] >= 0 {
+			count_positive++
+		}
 	}
+	fmt.Println(count_positive)
 }
