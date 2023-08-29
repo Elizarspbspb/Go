@@ -5,12 +5,12 @@ import (
     tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
     "fmt"
     //"strings"
-    "reflect"
+    //"reflect"
     //"log"
     "strconv"
 )
 
-func logFile(bot *tgbotapi.BotAPI) {
+func Message1(bot *tgbotapi.BotAPI) {
     /*file, err := os.Create("logTgWoork.txt")
     if err != nil{
         fmt.Println("Unable to create file logging work TG:", err) 
@@ -34,7 +34,7 @@ func logFile(bot *tgbotapi.BotAPI) {
 
     // Давайте рассмотрим каждое обновление, которое мы получаем от Telegram.
     for update := range updates {
-        fmt.Println("Start")
+        fmt.Println("Start Message 1")
         
         // Telegram может отправлять множество типов обновлений в зависимости от того, 
         // чем занимается ваш бот. Пока мы хотим просмотреть только сообщения, чтобы 
@@ -44,7 +44,8 @@ func logFile(bot *tgbotapi.BotAPI) {
         }
 
         //file, err := os.Create("logTgWoork.txt")
-        file, err := os.Create("logTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt")
+        //file, err := os.Create("logTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt")
+        file, err := os.OpenFile("logTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt", os.O_APPEND|os.O_WRONLY, 0600)
         if err != nil{
             fmt.Println("Unable to create file logging work TG:", err) 
             os.Exit(1) 
@@ -81,19 +82,3 @@ func logFile(bot *tgbotapi.BotAPI) {
     //file.WriteString("text")
     fmt.Println("Done.")
 }
-
-// export TELEGRAM_APITOKEN=...(number from telegram bot)
-func main() {
-    bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_APITOKEN"))
-    if err != nil {
-        panic(err)
-    }
-    fmt.Println(reflect.TypeOf(bot))
-    bot.Debug = true
-    //logFile(bot)
-	Message1(bot)
-}
-
-// sudo go mod init echo.go 
-// sudo go mod tidy
-// sudo go build -o test
