@@ -3,19 +3,20 @@ package main
 import (
     "os"
     tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-    //"fmt"
+    "fmt"
     //"strings"
+    "reflect"
+    //"log"
+    "strconv"
 )
 
-// export TELEGRAM_APITOKEN=...(number from telegram bot)
-func main() {
-    bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_APITOKEN"))
-    if err != nil {
-        panic(err)
-    }
+func logFile(bot *tgbotapi.BotAPI) {
+    /*file, err := os.Create("logTgWoork.txt")
+    if err != nil{
+        fmt.Println("Unable to create file logging work TG:", err) 
+        os.Exit(1) 
+    }*/
 
-    bot.Debug = true
-    
     // Создайте новую структуру updateConfig со смещением, равным 0. Смещения используются 
     // для того, чтобы убедиться, что Telegram знает, что мы обработали предыдущие значения, 
     // и нам не нужно их повторять.
@@ -29,8 +30,11 @@ func main() {
     // Начните опрос Telegram на предмет обновлений.
     updates := bot.GetUpdatesChan(updateConfig)
 
+    //file.WriteString(bot.Self.UserName)
+
     // Давайте рассмотрим каждое обновление, которое мы получаем от Telegram.
     for update := range updates {
+        fmt.Println("Start")
         
         // Telegram может отправлять множество типов обновлений в зависимости от того, 
         // чем занимается ваш бот. Пока мы хотим просмотреть только сообщения, чтобы 
@@ -39,15 +43,27 @@ func main() {
             continue
         }
 
+        //file, err := os.Create("logTgWoork.txt")
+        file, err := os.Create("logTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt")
+        if err != nil{
+            fmt.Println("Unable to create file logging work TG:", err) 
+            os.Exit(1) 
+        }
+        file.WriteString("Chat ID = " + strconv.FormatInt(update.Message.Chat.ID, 10))
+        file.WriteString("\nMessage ID = " + strconv.Itoa(update.Message.MessageID))
+        file.WriteString("\nUser Name = " + update.Message.From.UserName)
+        file.WriteString("\nText = " + update.Message.Text)
+        file.WriteString("\n-------------------\n")
+
         // Теперь, когда мы знаем, что получили новое сообщение, мы можем составить ответ! 
         // Мы возьмем идентификатор чата и текст из входящего сообщения и используем его 
         // для создания нового сообщения.
-        msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+            msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 
         // Мы также скажем, что это сообщение является ответом на предыдущее сообщение. 
         // Для любых других спецификаций, кроме идентификатора чата или текста, 
         // вам нужно будет задать поля в `MessageConfig`.
-        msg.ReplyToMessageID = update.Message.MessageID
+            msg.ReplyToMessageID = update.Message.MessageID
 
         // Хорошо, мы отправляем наше сообщение! Нас не волнует сообщение, 
         // которое мы только что отправили, поэтому мы его удалим.
@@ -57,6 +73,23 @@ func main() {
             // повторить попытку отправки сообщений или более корректно обрабатывать сбои.
             panic(err)
         }
+        fmt.Println("Check...")
+        defer file.Close() 
+        //file.WriteString("text")
     }
+    //defer file.Close() 
+    //file.WriteString("text")
+    fmt.Println("Done.")
+}
+
+// export TELEGRAM_APITOKEN=...(number from telegram bot)
+func main() {
+    bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_APITOKEN"))
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(reflect.TypeOf(bot))
+    bot.Debug = true
+    logFile(bot)
 
 }
