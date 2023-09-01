@@ -10,13 +10,31 @@ import (
     "strconv"
 )
 
+// export TELEGRAM_APITOKEN=...(number from telegram bot)
 
-func logFile(bot *tgbotapi.BotAPI) {
-    /*file, err := os.Create("logTgWoork.txt")
+func logFile(update tgbotapi.Update) {    
+    file, err := os.Create("logTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt")
     if err != nil{
         fmt.Println("Unable to create file logging work TG:", err) 
         os.Exit(1) 
-    }*/
+    }
+    file.WriteString("Chat ID = " + strconv.FormatInt(update.Message.Chat.ID, 10))
+    file.WriteString("\nMessage ID = " + strconv.Itoa(update.Message.MessageID))
+    file.WriteString("\nUser Name = " + update.Message.From.UserName)
+    file.WriteString("\nText = " + update.Message.Text)
+    file.WriteString("\n-------------------\n")
+
+    defer file.Close() 
+    fmt.Println("Log finished...")
+}
+
+func main() {
+    bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_APITOKEN"))
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(reflect.TypeOf(bot))
+    bot.Debug = true
 
     // Создайте новую структуру updateConfig со смещением, равным 0. Смещения используются 
     // для того, чтобы убедиться, что Telegram знает, что мы обработали предыдущие значения, 
@@ -31,69 +49,23 @@ func logFile(bot *tgbotapi.BotAPI) {
     // Начните опрос Telegram на предмет обновлений.
     updates := bot.GetUpdatesChan(updateConfig)
 
-    //file.WriteString(bot.Self.UserName)
-
-    // Давайте рассмотрим каждое обновление, которое мы получаем от Telegram.
+    // Обработка обновлений
     for update := range updates {
-        fmt.Println("Start")
-        
+        fmt.Println("Start updates.")
+        fmt.Println(reflect.TypeOf(update))
+
+        logFile(update)
+
         // Telegram может отправлять множество типов обновлений в зависимости от того, 
         // чем занимается ваш бот. Пока мы хотим просмотреть только сообщения, чтобы 
         // отменить любые другие обновления.
         if update.Message == nil {
             continue
+        } else {
+            EchoMessageSent(bot, update)
         }
-
-        //file, err := os.Create("logTgWoork.txt")
-        file, err := os.Create("logTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt")
-        if err != nil{
-            fmt.Println("Unable to create file logging work TG:", err) 
-            os.Exit(1) 
-        }
-        file.WriteString("Chat ID = " + strconv.FormatInt(update.Message.Chat.ID, 10))
-        file.WriteString("\nMessage ID = " + strconv.Itoa(update.Message.MessageID))
-        file.WriteString("\nUser Name = " + update.Message.From.UserName)
-        file.WriteString("\nText = " + update.Message.Text)
-        file.WriteString("\n-------------------\n")
-
-        // Теперь, когда мы знаем, что получили новое сообщение, мы можем составить ответ! 
-        // Мы возьмем идентификатор чата и текст из входящего сообщения и используем его 
-        // для создания нового сообщения.
-            msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-
-        // Мы также скажем, что это сообщение является ответом на предыдущее сообщение. 
-        // Для любых других спецификаций, кроме идентификатора чата или текста, 
-        // вам нужно будет задать поля в `MessageConfig`.
-            msg.ReplyToMessageID = update.Message.MessageID
-
-        // Хорошо, мы отправляем наше сообщение! Нас не волнует сообщение, 
-        // которое мы только что отправили, поэтому мы его удалим.
-        if _, err := bot.Send(msg); err != nil {
-            // Обратите внимание, что паника - плохой способ обработки ошибок. 
-            // В Telegram могут быть перебои в обслуживании или сетевые ошибки, вам следует 
-            // повторить попытку отправки сообщений или более корректно обрабатывать сбои.
-            panic(err)
-        }
-        fmt.Println("Check...")
-        defer file.Close() 
-        //file.WriteString("text")
+        fmt.Println("//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//")
     }
-
-    //defer file.Close() 
-    //file.WriteString("text")
-    fmt.Println("Done.")
-}
-
-// export TELEGRAM_APITOKEN=...(number from telegram bot)
-func main() {
-    bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_APITOKEN"))
-    if err != nil {
-        panic(err)
-    }
-    fmt.Println(reflect.TypeOf(bot))
-    bot.Debug = true
-    //logFile(bot)
-	Message1(bot)
 }
 
 // sudo go mod init echo.go 
