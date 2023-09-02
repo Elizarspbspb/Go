@@ -12,19 +12,16 @@ import (
 
 // export TELEGRAM_APITOKEN=...(number from telegram bot)
 
-func logFile(update tgbotapi.Update) {    
-    file, err := os.Create("logTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt")
-    if err != nil{
-        fmt.Println("Unable to create file logging work TG:", err) 
-        os.Exit(1) 
-    }
-    file.WriteString("Chat ID = " + strconv.FormatInt(update.Message.Chat.ID, 10))
+func logFile(update tgbotapi.Update, file *os.File) {    
+    file.WriteString("Date = " + strconv.Itoa(update.Message.Date))
+    file.WriteString("\nChat ID = " + strconv.FormatInt(update.Message.Chat.ID, 10))
     file.WriteString("\nMessage ID = " + strconv.Itoa(update.Message.MessageID))
     file.WriteString("\nUser Name = " + update.Message.From.UserName)
-    file.WriteString("\nText = " + update.Message.Text)
-    file.WriteString("\n-------------------\n")
+    file.WriteString("\nLast Name = " + update.Message.From.LastName)
+    file.WriteString("\nLanguage Code = " + update.Message.From.LanguageCode)
+    file.WriteString("\n Text = " + update.Message.Text)
 
-    defer file.Close() 
+    file.WriteString("\n-------------------\n")
     fmt.Println("Log finished...")
 }
 
@@ -54,7 +51,20 @@ func main() {
         fmt.Println("Start updates.")
         fmt.Println(reflect.TypeOf(update))
 
-        logFile(update)
+        file, err := os.OpenFile("logTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt", os.O_APPEND|os.O_WRONLY, 0600)
+        if err != nil {
+            newFile, err := os.Create("logTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt")
+            if err != nil {
+                fmt.Println("Unable to create file logging work TG:", err) 
+                os.Exit(1) 
+            }
+            logFile(update, newFile)
+            defer newFile.Close() 
+            fmt.Println("! File closed !") 
+        }
+        logFile(update, file)
+        defer file.Close() 
+        fmt.Println("! File closed !")
 
         // Telegram может отправлять множество типов обновлений в зависимости от того, 
         // чем занимается ваш бот. Пока мы хотим просмотреть только сообщения, чтобы 
