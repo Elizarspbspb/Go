@@ -72,6 +72,16 @@ func main() {
         if update.Message == nil {
             continue
         } else {
+            if update.Message.IsCommand() {
+                msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+                switch update.Message.Command() {
+                case "command1":
+                    msg.Text = "Лучший телеграм бот в мире !"
+                default:
+                    msg.Text = "I don't know that command"
+                }
+                bot.Send(msg)
+            }
             EchoMessageSent(bot, update)
         }
         fmt.Println("//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//")
