@@ -69,7 +69,11 @@ func main() {
         // Telegram может отправлять множество типов обновлений в зависимости от того, 
         // чем занимается ваш бот. Пока мы хотим просмотреть только сообщения, чтобы 
         // отменить любые другие обновления.
-        if update.Message == nil {
+        if update.Message.Document != nil {
+            msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+            msg.Text = "Документ загружен"
+            bot.Send(msg)
+        } else if update.Message == nil {
             continue
         } else {
             if update.Message.IsCommand() {
