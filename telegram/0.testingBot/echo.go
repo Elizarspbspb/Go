@@ -20,6 +20,18 @@ func logFile(update tgbotapi.Update, file *os.File) {
     file.WriteString("\nLast Name = " + update.Message.From.LastName)
     file.WriteString("\nLanguage Code = " + update.Message.From.LanguageCode)
     file.WriteString("\n Text = " + update.Message.Text)
+    if update.Message.Document != nil {
+        file.WriteString("\n Detected Document")
+        file.WriteString("\n \t Document ID = " + update.Message.Document.FileID)
+        file.WriteString("\n \t Document name = " + update.Message.Document.FileName)
+        file.WriteString("\n \t Document size = " + strconv.Itoa(update.Message.Document.FileSize) + (" byte"))
+    } else if update.Message.Photo != nil {
+        file.WriteString("\n Detected Photo")
+        file.WriteString("\n \t Photo ID = " + update.Message.Photo[3].FileID)
+        file.WriteString("\n \t Width = " + strconv.Itoa(update.Message.Photo[3].Width))
+        file.WriteString("\n \t Height = " + strconv.Itoa(update.Message.Photo[3].Height))
+        file.WriteString("\n \t FileSize = " + strconv.Itoa(update.Message.Photo[3].FileSize) + (" byte"))
+    }
 
     file.WriteString("\n-------------------\n")
     fmt.Println("Log finished...")
@@ -46,6 +58,7 @@ func main() {
     // Начните опрос Telegram на предмет обновлений.
     updates := bot.GetUpdatesChan(updateConfig)
 
+    //configuration := bot.FileConfig
     // Обработка обновлений
     for update := range updates {
         fmt.Println("Start updates.")
@@ -73,6 +86,38 @@ func main() {
             msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
             msg.Text = "Документ загружен"
             bot.Send(msg)
+
+            fileConf := tgbotapi.FileConfig {
+                FileID: update.Message.Document.FileID,
+            }
+            _, err := bot.GetFile(fileConf)
+            //photo, err := bot.GetFile(fileConf)
+	        if err != nil {
+		        msg.Text = "Не удалось скачать документ"
+                bot.Send(msg)
+	        }
+            links, err := bot.GetFileDirectURL(update.Message.Document.FileID)
+            fmt.Println("-------" + links)
+
+            EchoDocumentSent(bot, update)
+        } else if update.Message.Photo != nil {
+            msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+            msg.Text = "Фотография загружена"
+            bot.Send(msg)
+            
+            fileConf := tgbotapi.FileConfig {
+                FileID: update.Message.Photo[3].FileID,
+            }
+            _, err := bot.GetFile(fileConf)
+            //photo, err := bot.GetFile(fileConf)
+	        if err != nil {
+		        msg.Text = "Не удалось скачать фотографию"
+                bot.Send(msg)
+	        }
+            links, err := bot.GetFileDirectURL(update.Message.Photo[3].FileID)
+            fmt.Println("-------" + links)
+
+            EchoPhotoSent(bot, update)
         } else if update.Message == nil {
             continue
         } else {

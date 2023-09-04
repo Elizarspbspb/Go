@@ -31,3 +31,23 @@ func EchoMessageSent(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
     }
     fmt.Println("Message send!")
 }
+
+func EchoPhotoSent(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
+    msg := tgbotapi.NewPhoto(update.Message.Chat.ID, tgbotapi.FileID(update.Message.Photo[3].FileID))
+    msg.Caption = "Photo Test"
+	_, err := bot.Send(msg)
+	if err != nil {
+		panic(err)
+	}
+    fmt.Println("Photo send!")
+}
+
+func EchoDocumentSent(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
+	msg := tgbotapi.NewDocument(update.Message.Chat.ID, tgbotapi.FileID(update.Message.Document.FileID))
+    msg.Caption = "Document Test"
+	_, err := bot.Send(msg)
+	if err != nil {
+		panic(err)
+	}
+    fmt.Println("Document send!")
+}
