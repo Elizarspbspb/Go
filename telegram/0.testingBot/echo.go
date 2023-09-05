@@ -8,6 +8,9 @@ import (
     "reflect"
     //"log"
     "strconv"
+    "io"
+	"net/http"
+    "errors"
 )
 
 // export TELEGRAM_APITOKEN=...(number from telegram bot)
@@ -71,12 +74,13 @@ func main() {
                 fmt.Println("Unable to create file logging work TG:", err) 
                 os.Exit(1) 
             }
-            logFile(update, newFile)
             defer newFile.Close() 
+            logFile(update, newFile)
+            //defer newFile.Close() 
             fmt.Println("! File closed !") 
         }
+        defer file.Close()
         logFile(update, file)
-        defer file.Close() 
         fmt.Println("! File closed !")
 
         // Telegram может отправлять множество типов обновлений в зависимости от того, 
@@ -87,17 +91,20 @@ func main() {
             msg.Text = "Документ загружен"
             bot.Send(msg)
 
-            fileConf := tgbotapi.FileConfig {
-                FileID: update.Message.Document.FileID,
-            }
-            _, err := bot.GetFile(fileConf)
             //photo, err := bot.GetFile(fileConf)
-	        if err != nil {
+            links, errLink := bot.GetFileDirectURL(update.Message.Document.FileID)
+            if errLink != nil {
+		        msg.Text = "Не удалось получить ссылку на Документ"
+                bot.Send(msg)
+	        }
+            fmt.Println("-------" + links)
+            fileName := update.Message.Document.FileName
+	        errDow := downloadFile(links, fileName)
+	        if errDow != nil {
 		        msg.Text = "Не удалось скачать документ"
                 bot.Send(msg)
 	        }
-            links, err := bot.GetFileDirectURL(update.Message.Document.FileID)
-            fmt.Println("-------" + links)
+	        fmt.Printf("File %s downlaod in current working directory", fileName)
 
             EchoDocumentSent(bot, update)
         } else if update.Message.Photo != nil {
@@ -105,19 +112,26 @@ func main() {
             msg.Text = "Фотография загружена"
             bot.Send(msg)
             
-            fileConf := tgbotapi.FileConfig {
-                FileID: update.Message.Photo[3].FileID,
-            }
-            _, err := bot.GetFile(fileConf)
             //photo, err := bot.GetFile(fileConf)
-	        if err != nil {
-		        msg.Text = "Не удалось скачать фотографию"
+            links, errLink := bot.GetFileDirectURL(update.Message.Photo[3].FileID)
+            if errLink != nil {
+		        msg.Text = "Не удалось получить ссылку на Фото"
                 bot.Send(msg)
 	        }
-            links, err := bot.GetFileDirectURL(update.Message.Photo[3].FileID)
             fmt.Println("-------" + links)
+            fileName := strconv.Itoa(update.Message.MessageID)
+	        errDow := downloadFile(links, fileName)
+	        if errDow != nil {
+		        msg.Text = "Не удалось скачать фото"
+                bot.Send(msg)
+	        }
+	        fmt.Printf("File %s downlaod in current working directory", fileName)
 
             EchoPhotoSent(bot, update)
+        } else if update.Message.Audio != nil {
+            audio := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+            audio.Text = "Обработка аудио недоступна"
+            bot.Send(audio)
         } else if update.Message == nil {
             continue
         } else {
@@ -137,6 +151,28 @@ func main() {
     }
 }
 
+func downloadFile(URL, fileName string) error {
+	response, err := http.Get(URL)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+	if response.StatusCode != 200 {
+		return errors.New("Received non 200 response code")
+	}
+
+	file, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, response.Body)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 // sudo go mod init echo.go 
 // sudo go mod tidy
 // sudo go build -o test
