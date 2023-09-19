@@ -68,18 +68,25 @@ func main() {
 		fmt.Println(reflect.TypeOf(update))
 
 		func() {
-			file, err := os.OpenFile("./users/directory_"+strconv.FormatInt(update.Message.Chat.ID, 10)+"/logTg"+strconv.FormatInt(update.Message.Chat.ID, 10)+".txt", os.O_APPEND|os.O_WRONLY, 0600)
+			file, err := os.OpenFile("./users/directory_"+strconv.FormatInt(update.Message.Chat.ID, 10)+"/!LogTg"+strconv.FormatInt(update.Message.Chat.ID, 10)+".txt", os.O_APPEND|os.O_WRONLY, 0600)
 			if err != nil {
-				err := os.Mkdir("./users/directory_"+strconv.FormatInt(update.Message.Chat.ID, 10), os.ModePerm) // 0755 - права доступа к созданной папке
+				newFile, err := os.Create("./users/directory_" + strconv.FormatInt(update.Message.Chat.ID, 10) + "/!LogTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt")
 				if err != nil {
-					fmt.Printf("Ошибка при создании папки: %v\n", err)
-					os.Exit(1)
+					errMkdir := os.Mkdir("./users/directory_"+strconv.FormatInt(update.Message.Chat.ID, 10), 0755)
+					if errMkdir != nil {
+						fmt.Printf("Ошибка при создании директории: %v\n", errMkdir)
+						os.Exit(1)
+					}
+					newFileinDir, errFileinDir := os.Create("./users/directory_" + strconv.FormatInt(update.Message.Chat.ID, 10) + "/!LogTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt")
+					if errFileinDir != nil {
+						fmt.Printf("Ошибка при создании файла в директории: %v\n", errMkdir)
+						os.Exit(1)
+					}
+					defer newFileinDir.Close()
+					logFile(update, newFileinDir)
+					fmt.Println("! File closed !")
 				}
-				newFile, err := os.Create("./users/directory_" + strconv.FormatInt(update.Message.Chat.ID, 10) + "/logTg" + strconv.FormatInt(update.Message.Chat.ID, 10) + ".txt")
-				if err != nil {
-					fmt.Println("Unable to create file logging work TG:", err)
-					os.Exit(1)
-				}
+				//err := os.Mkdir("./users/directory_"+strconv.FormatInt(update.Message.Chat.ID, 10), os.ModePerm) // 0755 - права доступа к созданной папке
 				defer newFile.Close()
 				logFile(update, newFile)
 				fmt.Println("! File closed !")
@@ -118,11 +125,22 @@ func main() {
 			cmdArgs := []string{"./users/directory_" + strconv.FormatInt(update.Message.Chat.ID, 10) + "/" + fileName}
 			cmd.Args = append(cmd.Args, cmdArgs[0])
 			cmd.Stdout = os.Stdout
+			fmt.Println("Start check")
 			err := cmd.Run()
 			if err != nil {
 				msg.Text = "Не удалось обработать файл " + fileName
 				bot.Send(msg)
+			} else {
+				answerMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+				fileCheck, err := os.ReadFile("./users/directory_" + strconv.FormatInt(update.Message.Chat.ID, 10) + "/" + fileName + ".txt")
+				if err != nil {
+					fmt.Printf("Ошибка при открытии отладочной информации файла: %v\n", err)
+					os.Exit(1)
+				}
+				answerMsg.Text = string(fileCheck)
+				bot.Send(answerMsg)
 			}
+			fmt.Println("Finished check")
 		} else if update.Message.Photo != nil {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
 			msg.Text = "Фотография загружена"
